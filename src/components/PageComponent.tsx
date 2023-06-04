@@ -1,11 +1,13 @@
 // PageComponent.tsx
-import { DragItem } from "@/types/dnd";
-import React, { useState } from "react";
-import { useDrop } from "react-dnd";
-import { uuid } from "uuidv4";
-import { Button } from "./Button";
-import { Heading } from "./Heading";
-import { TextInput } from "./TextInput";
+import { dummyCards } from '@/constants/dummy';
+import { DragItem } from '@/types/dnd';
+import React, { useState } from 'react';
+import { useDrop } from 'react-dnd';
+import { uuid } from 'uuidv4';
+import { ArticleCard } from './ArticleCard';
+import { Button } from './Button';
+import { Heading } from './Heading';
+import { TextInput } from './TextInput';
 
 type ComponentType = {
   id: string;
@@ -16,44 +18,47 @@ type ComponentType = {
 
 export const PageComponent = () => {
   const [components, setComponents] = useState<ComponentType[]>([]);
-  console.log(components);
+  const articleCardProps = {
+    thumbnailUrl: dummyCards[0].thumbnailUrl,
+    category: dummyCards[0].category,
+    title: dummyCards[0].title,
+    createdAt: dummyCards[0].createdAt,
+  };
 
-  const [{ isOver }, drop] = useDrop<DragItem, void, { isOver: boolean }>(
-    () => ({
-      accept: ["button", "textInput", "heading"],
-      drop: (item, monitor) => {
-        const offset = monitor.getClientOffset();
-        if (!offset) return;
+  const [{ isOver }, drop] = useDrop<DragItem, void, { isOver: boolean }>(() => ({
+    accept: ['button', 'textInput', 'heading', 'articleCard'],
+    drop: (item, monitor) => {
+      const offset = monitor.getClientOffset();
+      if (!offset) return;
 
-        const dropTargetElement = document.elementFromPoint(offset.x, offset.y);
-        if (!dropTargetElement) return;
+      const dropTargetElement = document.elementFromPoint(offset.x, offset.y);
+      if (!dropTargetElement) return;
 
-        const dropTargetRects = dropTargetElement.getBoundingClientRect();
-        const left = offset.x - dropTargetRects.left;
-        const top = offset.y - dropTargetRects.top;
-        const type = item.type;
+      const dropTargetRects = dropTargetElement.getBoundingClientRect();
+      const left = offset.x - dropTargetRects.left;
+      const top = offset.y - dropTargetRects.top;
+      const type = item.type;
 
-        // 新規コンポーネントの作成
-        if (item.origin === "componentList") {
-          const id = uuid();
-          setComponents((prev) => [...prev, { id, type, left, top }]);
-        }
-        // 既存コンポーネントの移動
-        else if (item.origin === "pageComponent") {
-          setComponents((prev) =>
-            prev.map((component) =>
-              component.id === item.id ? { ...component, left, top } : component
-            )
-          );
-        }
-      },
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-      }),
-    })
-  );
+      // 新規コンポーネントの作成
+      if (item.origin === 'componentList') {
+        const id = uuid();
+        setComponents((prev) => [...prev, { id, type, left, top }]);
+      }
+      // 既存コンポーネントの移動
+      else if (item.origin === 'pageComponent') {
+        setComponents((prev) =>
+          prev.map((component) =>
+            component.id === item.id ? { ...component, left, top } : component,
+          ),
+        );
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
 
-  const backgroundColor = isOver ? "bg-green-200" : "bg-gray-200";
+  const backgroundColor = isOver ? 'bg-green-200' : 'bg-gray-200';
 
   return (
     <div
@@ -63,15 +68,24 @@ export const PageComponent = () => {
       {components.map((component) => {
         let item;
         switch (component.type) {
-          case "button":
-            item = <Button id={component.id} origin={"pageComponent"} />;
+          case 'button':
+            item = <Button id={component.id} origin={'pageComponent'} />;
             break;
-          case "textInput":
-            item = <TextInput id={component.id} origin={"pageComponent"} />;
+          case 'textInput':
+            item = <TextInput id={component.id} origin={'pageComponent'} />;
             break;
-          case "heading":
-            item = <Heading id={component.id} origin={"pageComponent"} />;
+          case 'heading':
+            item = <Heading id={component.id} origin={'pageComponent'} />;
             break;
+          case 'articleCard':
+            item = (
+              <ArticleCard
+                id={component.id}
+                origin={'pageComponent'}
+                contentId={'112'}
+                {...articleCardProps}
+              />
+            );
           default:
             break;
         }
@@ -80,7 +94,7 @@ export const PageComponent = () => {
             <div
               key={component.id}
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left: component.left,
                 top: component.top,
               }}
