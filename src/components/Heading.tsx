@@ -5,10 +5,10 @@ import { useDrag } from "react-dnd";
 
 type Props = UIParams;
 
-export const Button: FC<Props> = ({ id, origin }) => {
+export const Heading: FC<Props> = ({ id, origin }) => {
   const [{ isDragging }, drag] = useDrag(() => ({
-    type: "button",
-    item: { id, origin, type: "button" },
+    type: "heading",
+    item: { id, origin, type: "heading" },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -19,9 +19,7 @@ export const Button: FC<Props> = ({ id, origin }) => {
       ref={drag}
       className={`flex ${isDragging ? "opacity-50" : "opacity-100"}`}
     >
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Button
-      </button>
+      <h2>タイトルを入力してください</h2>
     </div>
   );
 };
