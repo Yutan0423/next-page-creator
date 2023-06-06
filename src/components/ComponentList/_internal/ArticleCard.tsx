@@ -2,8 +2,8 @@ import { UIParams } from '@/types/dnd';
 import { format } from 'date-fns';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useDrag } from 'react-dnd';
-import { Spacer } from './Util/Spacer';
+import { DragWrapper } from '../../ReactDnd/DragWrapper';
+import { Spacer } from '../../Util/Spacer';
 
 type Props = UIParams & {
   contentId: string;
@@ -14,26 +14,18 @@ type Props = UIParams & {
 };
 
 export const ArticleCard: React.FC<Props> = ({
-  id,
-  origin,
   contentId,
   thumbnailUrl,
   category,
   title,
   createdAt,
+  ...dragWrapperProps
 }) => {
   const createdAtDate = new Date(createdAt);
   const formattedDate = format(createdAtDate, 'yyyy/MM/dd');
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'articleCard',
-    item: { id, origin, type: 'articleCard' },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
 
   return (
-    <div ref={drag} className={`flex ${isDragging ? 'opacity-50' : 'opacity-100'}`}>
+    <DragWrapper {...dragWrapperProps}>
       <Link href={`/articles/${contentId}`}>
         <div className="bg-white shadow-md rounded-lg p-4 w-full md:flex">
           <div className="w-full md:w-[210px] relative mb-4 md:mb-0">
@@ -57,6 +49,6 @@ export const ArticleCard: React.FC<Props> = ({
           </div>
         </div>
       </Link>
-    </div>
+    </DragWrapper>
   );
 };

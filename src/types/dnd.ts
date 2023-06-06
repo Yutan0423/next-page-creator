@@ -1,8 +1,5 @@
 export type UIParams = {
   id: string;
-  origin: "componentList" | "pageComponent";
-};
-
-export type DragItem = UIParams & {
+  origin: 'componentList' | 'pageComponent';
   type: string;
 };
