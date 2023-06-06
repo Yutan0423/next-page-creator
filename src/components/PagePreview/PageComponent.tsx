@@ -1,13 +1,13 @@
 // PageComponent.tsx
 import { dummyCards } from '@/constants/dummy';
-import { DragItem } from '@/types/dnd';
+import { UIParams } from '@/types/dnd';
 import React, { useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { uuid } from 'uuidv4';
-import { ArticleCard } from './ArticleCard';
-import { Button } from './Button';
-import { Heading } from './Heading';
-import { TextInput } from './TextInput';
+import { ArticleCard } from '../ComponentList/_internal/ArticleCard';
+import { Button } from '../ComponentList/_internal/Button';
+import { Heading } from '../ComponentList/_internal/Heading';
+import { TextInput } from '../ComponentList/_internal/TextInput';
 
 type ComponentType = {
   id: string;
@@ -16,7 +16,7 @@ type ComponentType = {
   top: number;
 };
 
-export const PageComponent = () => {
+export const PagePreview = () => {
   const [components, setComponents] = useState<ComponentType[]>([]);
   const articleCardProps = {
     thumbnailUrl: dummyCards[0].thumbnailUrl,
@@ -25,7 +25,7 @@ export const PageComponent = () => {
     createdAt: dummyCards[0].createdAt,
   };
 
-  const [{ isOver }, drop] = useDrop<DragItem, void, { isOver: boolean }>(() => ({
+  const [{ isOver }, drop] = useDrop<UIParams, void, { isOver: boolean }>(() => ({
     accept: ['button', 'textInput', 'heading', 'articleCard'],
     drop: (item, monitor) => {
       const offset = monitor.getClientOffset();
@@ -63,25 +63,26 @@ export const PageComponent = () => {
   return (
     <div
       ref={drop}
-      className={`w-4/5 h-96 border border-sky-200 rounded relative ${backgroundColor}`}
+      className={`w-4/5 h-screen border border-sky-200 rounded relative ${backgroundColor}`}
     >
       {components.map((component) => {
         let item;
         switch (component.type) {
           case 'button':
-            item = <Button id={component.id} origin={'pageComponent'} />;
+            item = <Button id={component.id} origin={'pageComponent'} type={component.type} />;
             break;
           case 'textInput':
-            item = <TextInput id={component.id} origin={'pageComponent'} />;
+            item = <TextInput id={component.id} origin={'pageComponent'} type={component.type} />;
             break;
           case 'heading':
-            item = <Heading id={component.id} origin={'pageComponent'} />;
+            item = <Heading id={component.id} origin={'pageComponent'} type={component.type} />;
             break;
           case 'articleCard':
             item = (
               <ArticleCard
                 id={component.id}
                 origin={'pageComponent'}
+                type={component.type}
                 contentId={'112'}
                 {...articleCardProps}
               />
